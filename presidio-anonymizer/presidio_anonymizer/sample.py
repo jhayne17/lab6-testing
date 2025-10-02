@@ -1,32 +1,36 @@
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import RecognizerResult, OperatorConfig
 
-def sample_run_anonymizer():
+
+def sample_run_anonymizer(text: str, start: int, end: int, replacement: str = "BIP"):
+    """
+    Run the anonymizer with given parameters.
+
+    :param text: Input text
+    :param start: Start index of entity
+    :param end: End index of entity
+    :param replacement: Replacement string for the entity
+    :return: Anonymization result
+    """
     # Initialize the engine
     engine = AnonymizerEngine()
 
-    # Invoke the anonymize function with the text, 
-    # analyzer results (potentially coming from presidio-analyzer) and
-    # Operators to get the anonymization output:
+    # Invoke the anonymize function with the text, analyzer results, and operators
     result = engine.anonymize(
-        text=input("text: "),
-        analyzer_results=[RecognizerResult(entity_type="PERSON", start=int(input("start: ")), end=int(input("end: ")), score=0.8)],
-        operators={"PERSON": OperatorConfig("replace", {"new_value": "BIP"})}
+        text=text,
+        analyzer_results=[
+            RecognizerResult(entity_type="PERSON", start=start, end=end, score=0.8)
+        ],
+        operators={"PERSON": OperatorConfig("replace", {"new_value": replacement})},
     )
 
+    # Print for demonstration
     print(result)
 
-    # input should be:
-    # text: My name is Bond.
-    # start: 11
-    # end: 15
-    # 
-    # output should be:
-    # text: My name is BIP.
-    # items:
-    # [
-    #     {'start': 11, 'end': 14, 'entity_type': 'PERSON', 'text': 'BIP', 'operator': 'replace'}
-    # ]
+    return result
 
-if __name__ == "__main__": 
-    sample_run_anonymizer();
+
+if __name__ == "__main__":
+    # Example run with parameters for manual execution
+    output = sample_run_anonymizer("My name is Bond.", 11, 15, "BIP")
+    # Save to variable 'output' so it can be used in future tests if needed
